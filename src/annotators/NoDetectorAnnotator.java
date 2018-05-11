@@ -39,7 +39,7 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 	private List<String> listaPalabras;
 	static String[] SENTENCE;
 	private List<Oracion> oraciones;
-	private List<Integer> longitudOraciones; //Longitud acumulada
+	//private List<Integer> longitudOraciones; //Longitud acumulada
 	private OneSentenceText oST;
 
 	//ParsePosition pp = new ParsePosition(0);
@@ -62,7 +62,7 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 			//mapAux = mMap.getMap();
 			listaPalabras = mMap.getLista();
 			oraciones = new ArrayList<Oracion>();
-			longitudOraciones = new ArrayList<Integer>();
+			//longitudOraciones = new ArrayList<Integer>();
 			oST = new OneSentenceText();
 		} catch (ResourceAccessException e) {
 			e.printStackTrace();
@@ -79,7 +79,7 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 		docTextAux = new String(docText,Charsets.UTF_8);
 		System.out.println("################################");
 		System.out.println("El texto es ");
-		System.out.println(docText);
+		System.out.println(jCas.getDocumentText());
 		try {
 			//Se eliminan los saltos de línea retornos de carro y tabuladores
 
@@ -112,6 +112,7 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 				System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIII");
 				String oracionAux = tokenizer.nextToken();
 				System.out.println("SE HA ENCONTRADO LA ORACIÓN " + oracionAux);
+				System.out.println("ID DE LA ORACIÓN -> " + idOracionAux);
 				int inicioOracion = oneSentence.indexOf(oracionAux);
 				int finOracion = inicioOracion + oracionAux.length();
 				System.out.println("Comienza en " + inicioOracion);
@@ -148,7 +149,7 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 						int fin = 0;
 						inicio = token.indexOf(sAux);
 						fin = inicio + sAux.length();
-						longitudOraciones.add(idOracion,token.length());
+						//longitudOraciones.add(idOracion,token.length());
 
 
 

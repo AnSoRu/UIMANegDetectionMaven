@@ -132,7 +132,7 @@ public class NegationAnalyzer {
 		List<NoDetector> anotacionesSentence = anotaciones.get(sentenceId);
 		boolean res = false;
 		boolean encontrado = false;
-		if(anotacionesSentence!=null) {//Caso en el que existe la oración con ese id
+		if(anotacionesSentence!=null) {//Caso en el que existan anotaciones en la oración con ese id
 			if(!anotacionesSentence.isEmpty()) {//Caso en el que existan anotaciones en esa oración
 				for(NoDetector nD: anotacionesSentence) {
 					//Obtengo la oración asociada a la anotación
@@ -156,11 +156,11 @@ public class NegationAnalyzer {
 					res = true;
 				}
 			}else {//Caso en el que no existan anotaciones en esa oración
-				System.out.println("No existen anotaciones en esa oracion");
+				System.out.println("No existen anotaciones en la oración con id " + sentenceId);
 				res = false;
 			}
 		}else {
-			System.out.println("No existe la oración con ese id");
+			System.out.println("No existen anotaciones en la oración con id " + sentenceId);
 			res = false;
 		}
 		return res;
@@ -170,7 +170,7 @@ public class NegationAnalyzer {
 	//No tengo que hacer el POS
 	public static void main(String [] args) {
 		NegationAnalyzer nA = new NegationAnalyzer();
-		System.out.println(nA.isNegated("VIH",1));
+		System.out.println(nA.isNegated("VIH",2));
 	}
 
 }
