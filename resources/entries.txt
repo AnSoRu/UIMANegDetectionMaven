@@ -19,15 +19,17 @@ Improbable
 Libre de
 Libre
 Nada
+Negativo para
+Negativa para
 Negativo
 Negativa
 Negatividad para
-Negativo para
 Negó
 Niega
 Ningún
 Ninguna indicación de
 Ninguna sospecha de
+Ningun
 Ni
 No
 Nunca desarrollado
@@ -42,30 +44,30 @@ Rechazado
 Rechazando
 Resultaron negativas
 Resultaron negativos
-Se descarta
 Se descartan
+Se descarta
 Se descartó
-Se negó
 Se negó a realizar
+Se negó
 Se podían descartar
 Se puede descartar
 Siendo descartado
 Sin aumento
+Sin cambios sospechosos
+Sin cambios significativos
+Sin cambios
 Sin cambio de intervalo
 Sin cambio significativo
-Sin cambios
-Sin cambios significativos
-Sin cambios sospechosos
-Sin causa
 Sin causa de
+Sin causa
 Sin dificultades
 Sin drenaje
-Sin evidencia
-Sin evidencia mamográfica
-Sin evidencia para sugerir
 Sin evidencia radiográfica de
-Sin evidencias
+Sin evidencia para sugerir
+Sin evidencia mamográfica
 Sin evidencias para sugerir
+Sin evidencias
+Sin evidencia
 Sin extensión
 Sin indicaciones de
 Sin nada especial para
@@ -76,8 +78,8 @@ Sin otra evidencia
 Sin queja de
 Sin resultados de
 Sin resultados que indiquen
-Sin signos
 Sin signos de
+Sin signos
 Sin
 Suficiente para descartar
 Suspendiendo
@@ -103,19 +105,21 @@ improbable
 libre de
 libre
 nada
+negativo para
+negativa para
 negativo
 negativa
 negatividad para
-negativo para
 negó
-ninguna sospecha de
-ninguna indicación de
-ningún
 niega
+ningún
+ninguna indicación de
+ninguna sospecha de
+ningun
 ni
 no
-nunca tuvo
 nunca desarrollado
+nunca tuvo
 nunca
 paciente no estaba
 para excluir
@@ -126,30 +130,30 @@ rechazado
 rechazando
 resultaron negativas
 resultaron negativos
-se descarta
 se descartan
+se descarta
 se descartó
-se negó
 se negó a realizar
+se negó
 se podían descartar
 se puede descartar
 siendo descartado
 sin aumento
+sin cambios sospechosos
+sin cambios significativos
+sin cambios
 sin cambio de intervalo
 sin cambio significativo
-sin cambios
-sin cambios significativos
-sin cambios sospechosos
-sin causa
 sin causa de
+sin causa
 sin dificultades
 sin drenaje
-sin evidencia
-sin evidencia mamográfica
-sin evidencia para sugerir
 sin evidencia radiográfica de
-sin evidencias
+sin evidencia para sugerir
+sin evidencia mamográfica
 sin evidencias para sugerir
+sin evidencias
+sin evidencia
 sin extensión
 sin indicaciones de
 sin nada especial para
@@ -160,8 +164,8 @@ sin otra evidencia
 sin queja de
 sin resultados de
 sin resultados que indiquen
-sin signos
 sin signos de
+sin signos
 sin
 suficiente para descartar
 suspendiendo

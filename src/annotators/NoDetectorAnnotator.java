@@ -160,16 +160,21 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 				
 						Type tipo = jCas.getTypeSystem().getType("defecto.NoDetector");
 						FSIterator<Annotation> iter = jCas.getAnnotationIndex(tipo).iterator();
+						boolean add = true;
 						while(iter.hasNext()) {
 							NoDetector aux2 = (NoDetector) iter.next();
+							if(aux2.getIdOracion()==idOracion) {
+								
+							}
 							
 						}						
-
+						
 						NoDetector annotation = new NoDetector(jCas);
 						annotation.setBegin(inicio);
 						annotation.setEnd(fin);
 						annotation.setIdOracion(idOracion);
 						annotation.setOracionString(token);
+						annotation.setLongitud(annotation.getEnd()-annotation.getBegin());
 
 						System.out.println("Se ha creado una anotaci�n en la oraci�n " + idOracion);
 						System.out.println("La anotacion comienza en " + inicio);

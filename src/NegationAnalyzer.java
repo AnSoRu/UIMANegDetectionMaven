@@ -76,7 +76,11 @@ public class NegationAnalyzer {
 		System.out.println("En StoreAnnotations");
 		Type tipo = jcas.getTypeSystem().getType("defecto.NoDetector");
 		FSIterator<Annotation> iter = jcas.getAnnotationIndex(tipo).iterator();
-		AnnotationIndex<Annotation> ai = jcas.getAnnotationIndex();
+		List<NoDetector> anotacionesEncontradas = new ArrayList<NoDetector>();
+		while(iter.hasNext()) {
+			anotacionesEncontradas.add((NoDetector)iter.next());
+		}
+		iter.moveToFirst();
 		while(iter.isValid()) {
 			FeatureStructure fs = iter.get();
 			NoDetector annot = (NoDetector)fs; //Esta es la anotaci�n que quiero a�adir
@@ -105,7 +109,7 @@ public class NegationAnalyzer {
 						System.out.println("Longitud lenNd = " + lenNd );
 						int lenAnnot = annot.getEnd() - annot.getBegin();
 						System.out.println("Longitud lenAnnot = " + lenAnnot);
-						System.out.println("POOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+						System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
 						//if(nD.getEnd() < annot.getEnd()) { //este caso se corresponder�a con nD = sin y annot = sin signos de
 						if(lenNd > lenAnnot) {	//Debo eliminar las anotaci�n que tengo (nD) 
 							aux.remove(nD);

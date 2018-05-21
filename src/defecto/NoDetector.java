@@ -11,7 +11,7 @@ import org.apache.uima.jcas.tcas.Annotation;
 
 
 /** 
- * Updated by JCasGen Mon Apr 23 18:01:36 CEST 2018
+ * Updated by JCasGen Mon May 21 22:58:40 CEST 2018
  * XML source: D:/EclipseWorkspace/UIMANegDetection/desc/SimpleNoRecognizer.xml
  * @generated */
 public class NoDetector extends Annotation {
@@ -116,6 +116,28 @@ public class NoDetector extends Annotation {
     if (NoDetector_Type.featOkTst && ((NoDetector_Type)jcasType).casFeat_oracionString == null)
       jcasType.jcas.throwFeatMissing("oracionString", "defecto.NoDetector");
     jcasType.ll_cas.ll_setStringValue(addr, ((NoDetector_Type)jcasType).casFeatCode_oracionString, v);}    
+   
+    
+  //*--------------*
+  //* Feature: longitud
+
+  /** getter for longitud - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public int getLongitud() {
+    if (NoDetector_Type.featOkTst && ((NoDetector_Type)jcasType).casFeat_longitud == null)
+      jcasType.jcas.throwFeatMissing("longitud", "defecto.NoDetector");
+    return jcasType.ll_cas.ll_getIntValue(addr, ((NoDetector_Type)jcasType).casFeatCode_longitud);}
+    
+  /** setter for longitud - sets  
+   * @generated
+   * @param v value to set into the feature 
+   */
+  public void setLongitud(int v) {
+    if (NoDetector_Type.featOkTst && ((NoDetector_Type)jcasType).casFeat_longitud == null)
+      jcasType.jcas.throwFeatMissing("longitud", "defecto.NoDetector");
+    jcasType.ll_cas.ll_setIntValue(addr, ((NoDetector_Type)jcasType).casFeatCode_longitud, v);}    
   }
 
     

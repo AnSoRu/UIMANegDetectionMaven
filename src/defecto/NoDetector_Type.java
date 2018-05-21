@@ -11,7 +11,7 @@ import org.apache.uima.cas.Feature;
 import org.apache.uima.jcas.tcas.Annotation_Type;
 
 /** 
- * Updated by JCasGen Mon Apr 23 18:01:37 CEST 2018
+ * Updated by JCasGen Mon May 21 22:58:40 CEST 2018
  * @generated */
 public class NoDetector_Type extends Annotation_Type {
   /** @generated */
@@ -71,6 +71,30 @@ public class NoDetector_Type extends Annotation_Type {
     ll_cas.ll_setStringValue(addr, casFeatCode_oracionString, v);}
     
   
+ 
+  /** @generated */
+  final Feature casFeat_longitud;
+  /** @generated */
+  final int     casFeatCode_longitud;
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @return the feature value 
+   */ 
+  public int getLongitud(int addr) {
+        if (featOkTst && casFeat_longitud == null)
+      jcas.throwFeatMissing("longitud", "defecto.NoDetector");
+    return ll_cas.ll_getIntValue(addr, casFeatCode_longitud);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set 
+   */    
+  public void setLongitud(int addr, int v) {
+        if (featOkTst && casFeat_longitud == null)
+      jcas.throwFeatMissing("longitud", "defecto.NoDetector");
+    ll_cas.ll_setIntValue(addr, casFeatCode_longitud, v);}
+    
+  
 
 
 
@@ -90,6 +114,10 @@ public class NoDetector_Type extends Annotation_Type {
  
     casFeat_oracionString = jcas.getRequiredFeatureDE(casType, "oracionString", "uima.cas.String", featOkTst);
     casFeatCode_oracionString  = (null == casFeat_oracionString) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_oracionString).getCode();
+
+ 
+    casFeat_longitud = jcas.getRequiredFeatureDE(casType, "longitud", "uima.cas.Integer", featOkTst);
+    casFeatCode_longitud  = (null == casFeat_longitud) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_longitud).getCode();
 
   }
 }
