@@ -13,6 +13,7 @@ import org.apache.uima.analysis_engine.TextAnalysisEngine;
 import org.apache.uima.cas.FSIterator;
 import org.apache.uima.cas.FeatureStructure;
 import org.apache.uima.cas.Type;
+import org.apache.uima.cas.text.AnnotationIndex;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceInitializationException;
@@ -71,14 +72,17 @@ public class NegationAnalyzer {
 	}//end Constructor
 
 	private static void storeAnnotations(JCas jcas) {
+		System.out.println("%%%%%%%%%%%%%%%%%%%%%%%");
+		System.out.println("En StoreAnnotations");
 		Type tipo = jcas.getTypeSystem().getType("defecto.NoDetector");
 		FSIterator<Annotation> iter = jcas.getAnnotationIndex(tipo).iterator();
+		AnnotationIndex<Annotation> ai = jcas.getAnnotationIndex();
 		while(iter.isValid()) {
 			FeatureStructure fs = iter.get();
 			NoDetector annot = (NoDetector)fs; //Esta es la anotaci�n que quiero a�adir
 			//System.out.println("Anotaci�n (Covered Text) > " + annot.getCoveredText());
-			System.out.println("Comienzo de anotaci�n " + annot.getBegin() + " hasta " + annot.getEnd() + " ID de la oraci�n "+ annot.getIdOracion());
-			System.out.println("Oraci�n " + annot.getOracionString() );
+			System.out.println("1)Comienzo de anotaci�n " + annot.getBegin() + " hasta " + annot.getEnd() + " ID de la oraci�n "+ annot.getIdOracion());
+			//System.out.println("Oraci�n " + annot.getOracionString() );
 			//anotaciones.add(index, element);
 			List<NoDetector> aux = anotaciones.get(annot.getIdOracion()); //Estas son las anotaciones de la oraci�n
 			if(aux==null) {
@@ -93,21 +97,29 @@ public class NegationAnalyzer {
 				//Para evitar que me anote varias veces una palabra que ya est� contenida en un conjunto de palabras
 				//de las cuales ya tengo la anotaci�n tengo que filtrar
 				boolean add = false;
-				for(NoDetector nD: aux) { //nD es la anotaci�n que ya tengo
+				for(NoDetector nD: aux) { 
+					//nD es la anotaci�n que ya tengo
 					//annot es la que quiero a�adir o no
 					if(nD.getBegin() == annot.getBegin()) { //deben de comenzar en el mismo caracter
-						if(nD.getEnd() < annot.getEnd()) { //este caso se corresponder�a con nD = sin y annot = sin signos de
-							//Debo eliminar las anotaci�n que tengo (nD) 
+						int lenNd = nD.getEnd() - nD.getBegin();
+						System.out.println("Longitud lenNd = " + lenNd );
+						int lenAnnot = annot.getEnd() - annot.getBegin();
+						System.out.println("Longitud lenAnnot = " + lenAnnot);
+						System.out.println("POOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+						//if(nD.getEnd() < annot.getEnd()) { //este caso se corresponder�a con nD = sin y annot = sin signos de
+						if(lenNd > lenAnnot) {	//Debo eliminar las anotaci�n que tengo (nD) 
 							aux.remove(nD);
+							
+							System.out.println("&&&ELIMINADO&&&");
 							add = true; //Indico que tengo que a�adir la nueva annot (sin signos de)
-							break;
-							//aux.add(annot);
+							//break;
+							aux.add(annot);
 						}
 					}
 				}
-				if(add) {
+				/*if(add) {
 					aux.add(annot);
-				}
+				}*/
 				anotaciones.put(annot.getIdOracion(),aux);
 			}
 			iter.moveToNext();

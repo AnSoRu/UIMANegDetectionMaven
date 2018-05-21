@@ -11,6 +11,8 @@ import org.apache.commons.io.Charsets;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_component.JCasAnnotator_ImplBase;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
+import org.apache.uima.cas.FSIterator;
+import org.apache.uima.cas.Type;
 import org.apache.uima.cas.text.AnnotationIndex;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
@@ -140,26 +142,28 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 			
 				for(String sAux : listaPalabras) {
 					System.out.println("Evaluando si contiene " + sAux);
-					int contenida = isContained(token, sAux);
-					String sAuxCopy = sAux;
-					while(contenida>0) {
+					List<Integer> contenida = isContained(token, sAux);
+					
+					int tam = contenida.size();
+					int aux = 0;
+					while(aux<tam) {
 						int idOracion = oAux.getId();
 						int inicio = 0;
 						int fin = 0;
-						inicio = token.indexOf(sAuxCopy);
-						fin = inicio + sAux.length();
-						//longitudOraciones.add(idOracion,token.length());
-
-
-
-						//if(anterior.contains(sAux)) {
+						inicio = contenida.get(aux);
+						fin = inicio + sAux.length() - 1;
+					
 						System.out.println("La oracion contiene " + sAux);
 						System.out.println("Comienza en : " + inicio);
 						///
 						posAux = token.indexOf(sAux);
-						//inicio = token.indexOf(sAux);
-						//fin = inicio + sAux.length();
-						///
+				
+						Type tipo = jCas.getTypeSystem().getType("defecto.NoDetector");
+						FSIterator<Annotation> iter = jCas.getAnnotationIndex(tipo).iterator();
+						while(iter.hasNext()) {
+							NoDetector aux2 = (NoDetector) iter.next();
+							
+						}						
 
 						NoDetector annotation = new NoDetector(jCas);
 						annotation.setBegin(inicio);
@@ -171,32 +175,13 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 						System.out.println("La anotacion comienza en " + inicio);
 						System.out.println("La anotaci�n termina en " + fin);
 
-						///////////////////////////////////////////////////
-						//Obtenemos los �ndices de las anotaciones producidas por el "NoDetectorAnnotator"
-						AnnotationIndex<Annotation> noIndex = jCas.getAnnotationIndex(NoDetector.type);
-						if(noIndex.size()>0) {
-							//System.out.println("#######################");
-							//System.out.println("Hay cosas");
-							if(noIndex.find(annotation)==null) {
-								System.out.println("No existe a�n la anotaci�n");
-								annotation.addToIndexes();
-								//////////////////////////////////////////////////
-								System.out.println("////////////////////////////");
-								System.out.println("ANOTADA 1 VEZ");
-							}
-						}else {
-							//System.out.println("No hay na de na");
-							annotation.addToIndexes();
-							//////////////////////////////////////////////////
-							System.out.println("////////////////////////////");
-							System.out.println("ANOTADA 1 VEZ");
-						}
-						contenida --;
+						annotation.addToIndexes();
+												
+						aux++;
 					}
 				}
 				posAux = posAux + token.length();
 				i++;
-				//anterior = "";
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -207,19 +192,25 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 		return this.oraciones;
 	}
 
-	private static int isContained(String source, String subItem) {
+	private static List<Integer> isContained(String source, String subItem) {
 		String pattern = "\\b" + subItem + "\\b";
 		Pattern p = Pattern.compile(pattern);
 		Matcher m = p.matcher(source);
-		int res = 0;
-		while(m.find()) {
-			res ++;
+		List<Integer> result = new ArrayList<Integer>();
+ 		while(m.find()) {
+			result.add(m.start());
 		}
-		return res;
+		return result;
 	}
 	
-	public static void main(String [] args) {
+	/*public static void main(String [] args) {
 		NoDetectorAnnotator nda = new NoDetectorAnnotator();
-		System.out.println(nda.isContained("No HTA, no DM, no DL","no"));
-	}
+		String buscar = "no";
+		for(Integer aux : nda.isContained("No HTA, no DM, no DL",buscar)) {
+			System.out.println(aux);
+			System.out.println("Inicio " + aux);
+			int fin = aux + (buscar.length()-1);
+			System.out.println("Fin " + fin);
+		}
+	}*/
 }
