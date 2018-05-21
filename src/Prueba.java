@@ -29,8 +29,8 @@ public class Prueba {
 		while(iter.isValid()) {
 			FeatureStructure fs = iter.get();
 			NoDetector annot = (NoDetector)fs;
-			//System.out.println("Anotación (Covered Text) > " + annot.getCoveredText());
-			System.out.println("Comienzo de anotación " + annot.getBegin() + " hasta " + annot.getEnd() + " de la oración " + annot.getOracionString() + " con id " + annot.getIdOracion());
+			//System.out.println("Anotaciï¿½n (Covered Text) > " + annot.getCoveredText());
+			System.out.println("Comienzo de anotaciï¿½n " + annot.getBegin() + " hasta " + annot.getEnd() + " de la oraciï¿½n " + annot.getOracionString() + " con id " + annot.getIdOracion());
 			System.out.println();
 			iter.moveToNext();
 		}
@@ -41,7 +41,7 @@ public class Prueba {
 		try {
 
 			File descriptor = new File("D:\\EclipseWorkspace\\UIMANegDetection\\desc\\NoDetectorAnnotator.xml");
-			File inputFile = new File("D:\\Politecnica\\MásterIngInf\\4ºSemestre\\TFM\\PruebasAnotadorNegacion\\data\\Prueba1.txt");
+			File inputFile = new File("D:\\Politecnica\\MasterIngInf\\4Semestre\\TFM\\PruebasAnotadorNegacion\\data\\Prueba1.txt");
 
 
 			XMLInputSource in = new XMLInputSource(descriptor);

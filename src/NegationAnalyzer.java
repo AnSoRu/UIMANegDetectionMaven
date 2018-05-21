@@ -27,16 +27,16 @@ public class NegationAnalyzer {
 
 	//Clase que representa al programa
 
-	//Tabla para almacenar de cada oración las anotaciones que tienen asociadas para facilitar posteriormente
-	//la búsqueda
-	//La clave es el id de la oración y el valor almacenado es una lista de las anotaciones que hay en esa oración
+	//Tabla para almacenar de cada oraciï¿½n las anotaciones que tienen asociadas para facilitar posteriormente
+	//la bï¿½squeda
+	//La clave es el id de la oraciï¿½n y el valor almacenado es una lista de las anotaciones que hay en esa oraciï¿½n
 	private static HashMap<Integer,List<NoDetector>> anotaciones;
 
 	public NegationAnalyzer() {
 		try {
 
 			File descriptor = new File("D:\\EclipseWorkspace\\UIMANegDetection\\desc\\NoDetectorAnnotator.xml");
-			File inputFile = new File("D:\\Politecnica\\MásterIngInf\\4ºSemestre\\TFM\\PruebasAnotadorNegacion\\data\\Prueba1.txt");
+			File inputFile = new File("D:\\Politecnica\\MasterIngInf\\4Semestre\\TFM\\PruebasAnotadorNegacion\\data\\Prueba1.txt");
 
 
 			XMLInputSource in = new XMLInputSource(descriptor);
@@ -75,31 +75,31 @@ public class NegationAnalyzer {
 		FSIterator<Annotation> iter = jcas.getAnnotationIndex(tipo).iterator();
 		while(iter.isValid()) {
 			FeatureStructure fs = iter.get();
-			NoDetector annot = (NoDetector)fs; //Esta es la anotación que quiero añadir
-			//System.out.println("Anotación (Covered Text) > " + annot.getCoveredText());
-			System.out.println("Comienzo de anotación " + annot.getBegin() + " hasta " + annot.getEnd() + " ID de la oración "+ annot.getIdOracion());
-			System.out.println("Oración " + annot.getOracionString() );
+			NoDetector annot = (NoDetector)fs; //Esta es la anotaciï¿½n que quiero aï¿½adir
+			//System.out.println("Anotaciï¿½n (Covered Text) > " + annot.getCoveredText());
+			System.out.println("Comienzo de anotaciï¿½n " + annot.getBegin() + " hasta " + annot.getEnd() + " ID de la oraciï¿½n "+ annot.getIdOracion());
+			System.out.println("Oraciï¿½n " + annot.getOracionString() );
 			//anotaciones.add(index, element);
-			List<NoDetector> aux = anotaciones.get(annot.getIdOracion()); //Estas son las anotaciones de la oración
+			List<NoDetector> aux = anotaciones.get(annot.getIdOracion()); //Estas son las anotaciones de la oraciï¿½n
 			if(aux==null) {
 				//Creo una nueva lista
 				List<NoDetector> nuevaLista = new ArrayList<NoDetector>();
 				nuevaLista.add(annot);
 				anotaciones.put(annot.getIdOracion(),nuevaLista);
 			}else {
-				//No puedo evitar que se cree una anotación que esté contenida en otra de mayor tamaño, pues al estar basado en un
+				//No puedo evitar que se cree una anotaciï¿½n que estï¿½ contenida en otra de mayor tamaï¿½o, pues al estar basado en un
 				//diccionario va a anotarlo. Ej: sin signos de. Va a anotar 3 veces (sin signos de, sin signos y sin). Y es parcialmente
-				//correcto. Me quedo con la de mayor tamaño
-				//Para evitar que me anote varias veces una palabra que ya está contenida en un conjunto de palabras
-				//de las cuales ya tengo la anotación tengo que filtrar
+				//correcto. Me quedo con la de mayor tamaï¿½o
+				//Para evitar que me anote varias veces una palabra que ya estï¿½ contenida en un conjunto de palabras
+				//de las cuales ya tengo la anotaciï¿½n tengo que filtrar
 				boolean add = false;
-				for(NoDetector nD: aux) { //nD es la anotación que ya tengo
-					//annot es la que quiero añadir o no
+				for(NoDetector nD: aux) { //nD es la anotaciï¿½n que ya tengo
+					//annot es la que quiero aï¿½adir o no
 					if(nD.getBegin() == annot.getBegin()) { //deben de comenzar en el mismo caracter
-						if(nD.getEnd() < annot.getEnd()) { //este caso se correspondería con nD = sin y annot = sin signos de
-							//Debo eliminar las anotación que tengo (nD) 
+						if(nD.getEnd() < annot.getEnd()) { //este caso se corresponderï¿½a con nD = sin y annot = sin signos de
+							//Debo eliminar las anotaciï¿½n que tengo (nD) 
 							aux.remove(nD);
-							add = true; //Indico que tengo que añadir la nueva annot (sin signos de)
+							add = true; //Indico que tengo que aï¿½adir la nueva annot (sin signos de)
 							break;
 							//aux.add(annot);
 						}
@@ -119,31 +119,31 @@ public class NegationAnalyzer {
 		while(it.hasNext()) {
 			List<NoDetector> listaAux = it.next();
 			for(NoDetector annot : listaAux) {
-				System.out.println("Comienzo de anotación " + annot.getBegin() + " hasta " + annot.getEnd() + " ID de la oración "+ annot.getIdOracion());
-				System.out.println("Oración " + annot.getOracionString() );
+				System.out.println("Comienzo de anotaciï¿½n " + annot.getBegin() + " hasta " + annot.getEnd() + " ID de la oraciï¿½n "+ annot.getIdOracion());
+				System.out.println("Oraciï¿½n " + annot.getOracionString() );
 			}
 		}
 	}
 
 	public boolean isNegated(String concept, int sentenceId) {
-		//Primero obtener la oración y las anotaciones
-		//Segundo ver si está el concepto en la oración
+		//Primero obtener la oraciï¿½n y las anotaciones
+		//Segundo ver si estï¿½ el concepto en la oraciï¿½n
 		//
 		List<NoDetector> anotacionesSentence = anotaciones.get(sentenceId);
 		boolean res = false;
 		boolean encontrado = false;
-		if(anotacionesSentence!=null) {//Caso en el que existan anotaciones en la oración con ese id
-			if(!anotacionesSentence.isEmpty()) {//Caso en el que existan anotaciones en esa oración
+		if(anotacionesSentence!=null) {//Caso en el que existan anotaciones en la oraciï¿½n con ese id
+			if(!anotacionesSentence.isEmpty()) {//Caso en el que existan anotaciones en esa oraciï¿½n
 				for(NoDetector nD: anotacionesSentence) {
-					//Obtengo la oración asociada a la anotación
+					//Obtengo la oraciï¿½n asociada a la anotaciï¿½n
 					String sentence = nD.getOracionString();
 					System.out.println("##########################");
 					//Busco si encuentro el concept
 					int indice = sentence.indexOf(concept);
-					if(indice == -1) { //No se ha encontrado el concepto en la oración
+					if(indice == -1) { //No se ha encontrado el concepto en la oraciï¿½n
 						encontrado = false;
 						break;
-					}else { //Se ha encontrado el concepto en la oración
+					}else { //Se ha encontrado el concepto en la oraciï¿½n
 						encontrado = true;
 						break;
 					}
@@ -155,12 +155,12 @@ public class NegationAnalyzer {
 				}else {
 					res = true;
 				}
-			}else {//Caso en el que no existan anotaciones en esa oración
-				System.out.println("No existen anotaciones en la oración con id " + sentenceId);
+			}else {//Caso en el que no existan anotaciones en esa oraciï¿½n
+				System.out.println("No existen anotaciones en la oraciï¿½n con id " + sentenceId);
 				res = false;
 			}
 		}else {
-			System.out.println("No existen anotaciones en la oración con id " + sentenceId);
+			System.out.println("No existen anotaciones en la oraciï¿½n con id " + sentenceId);
 			res = false;
 		}
 		return res;

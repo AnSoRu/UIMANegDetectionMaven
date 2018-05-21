@@ -26,7 +26,7 @@ import defecto.NoDetector;
 public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 
 	//private Pattern noPattern = Pattern.compile("\\b(No|no).\\p{Punct}\\b");
-	//private Pattern noPattern = Pattern.compile("(No|no|ni|Tampoco|tampoco|Nunca|nunca|Sin|sin|Ningún|ningún)[\\s][a-zA-Z\\s]*[^\\p{Punct}]");
+	//private Pattern noPattern = Pattern.compile("(No|no|ni|Tampoco|tampoco|Nunca|nunca|Sin|sin|Ningï¿½n|ningï¿½n)[\\s][a-zA-Z\\s]*[^\\p{Punct}]");
 
 	//Fijarse en esta direccion
 	//http://sujitpal.blogspot.com.es/2011/06/uima-analysis-engine-for-keyword.html
@@ -81,7 +81,7 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 		System.out.println("El texto es ");
 		System.out.println(jCas.getDocumentText());
 		try {
-			//Se eliminan los saltos de línea retornos de carro y tabuladores
+			//Se eliminan los saltos de lï¿½nea retornos de carro y tabuladores
 
 			/*File temp = File.createTempFile("tempfile",".txt");
 			FileOutputStream fio = new FileOutputStream(temp);
@@ -95,12 +95,12 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 			System.out.println("??????????????????????????????????");
 			System.out.println("La transformada es ");
 			System.out.println(oneSentence);
-			//En la aplicación de visualización a partir de ahora no van a coincidir la anotación justo encima del texto correspondiente
-			//pues estoy transformando el texto de entrada para que sea más rápida la búsqueda, quitando los retornos de carro y saltos de línea.
-			//Puesto que estoy dependiendo al 100% de la posición de los caracteres en el texto para poder anotar, transformo todo el texto
-			//en una sola línea
+			//En la aplicaciï¿½n de visualizaciï¿½n a partir de ahora no van a coincidir la anotaciï¿½n justo encima del texto correspondiente
+			//pues estoy transformando el texto de entrada para que sea mï¿½s rï¿½pida la bï¿½squeda, quitando los retornos de carro y saltos de lï¿½nea.
+			//Puesto que estoy dependiendo al 100% de la posiciï¿½n de los caracteres en el texto para poder anotar, transformo todo el texto
+			//en una sola lï¿½nea
 			//En definitiva el texto sobre el que anoto no contiene ni retornos de carro 
-			//No es el objetivo de este proyecto que visualmente se vea la anotación.
+			//No es el objetivo de este proyecto que visualmente se vea la anotaciï¿½n.
 
 			int posAux = 0;
 			//StringTokenizer tokenizer = new StringTokenizer(docText,"\t\r\n.<>/?\";:[{]}\\|=+()!", false);
@@ -111,8 +111,8 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 			while(tokenizer.hasMoreTokens()) {
 				System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIII");
 				String oracionAux = tokenizer.nextToken();
-				System.out.println("SE HA ENCONTRADO LA ORACIÓN " + oracionAux);
-				System.out.println("ID DE LA ORACIÓN -> " + idOracionAux);
+				System.out.println("SE HA ENCONTRADO LA ORACIï¿½N " + oracionAux);
+				System.out.println("ID DE LA ORACIï¿½N -> " + idOracionAux);
 				int inicioOracion = oneSentence.indexOf(oracionAux);
 				int finOracion = inicioOracion + oracionAux.length();
 				System.out.println("Comienza en " + inicioOracion);
@@ -133,21 +133,20 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 				System.out.println(token);
 				System.out.println("La longitud es " + token.length());
 
-				//anterior = anterior + token;
-
 				//System.out.println("El anterior es -> " + anterior);
 				//System.out.println("El anterior con trim es -> " + anterior.trim());
-				//Buscar en el map para ver si es una palabra de negación
+				//Buscar en el map para ver si es una palabra de negaciï¿½n
 				//Negacion es siempre un string vacio es solo para saber si es != null
-				//Set<String> it = mapAux.keySet();
+			
 				for(String sAux : listaPalabras) {
 					System.out.println("Evaluando si contiene " + sAux);
-					if(isContained(token,sAux)) {
-
+					int contenida = isContained(token, sAux);
+					String sAuxCopy = sAux;
+					while(contenida>0) {
 						int idOracion = oAux.getId();
 						int inicio = 0;
 						int fin = 0;
-						inicio = token.indexOf(sAux);
+						inicio = token.indexOf(sAuxCopy);
 						fin = inicio + sAux.length();
 						//longitudOraciones.add(idOracion,token.length());
 
@@ -168,18 +167,18 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 						annotation.setIdOracion(idOracion);
 						annotation.setOracionString(token);
 
-						System.out.println("Se ha creado una anotación en la oración " + idOracion);
+						System.out.println("Se ha creado una anotaciï¿½n en la oraciï¿½n " + idOracion);
 						System.out.println("La anotacion comienza en " + inicio);
-						System.out.println("La anotación termina en " + fin);
+						System.out.println("La anotaciï¿½n termina en " + fin);
 
 						///////////////////////////////////////////////////
-						//Obtenemos los índices de las anotaciones producidas por el "NoDetectorAnnotator"
+						//Obtenemos los ï¿½ndices de las anotaciones producidas por el "NoDetectorAnnotator"
 						AnnotationIndex<Annotation> noIndex = jCas.getAnnotationIndex(NoDetector.type);
 						if(noIndex.size()>0) {
 							//System.out.println("#######################");
 							//System.out.println("Hay cosas");
 							if(noIndex.find(annotation)==null) {
-								System.out.println("No existe aún la anotación");
+								System.out.println("No existe aï¿½n la anotaciï¿½n");
 								annotation.addToIndexes();
 								//////////////////////////////////////////////////
 								System.out.println("////////////////////////////");
@@ -192,6 +191,7 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 							System.out.println("////////////////////////////");
 							System.out.println("ANOTADA 1 VEZ");
 						}
+						contenida --;
 					}
 				}
 				posAux = posAux + token.length();
@@ -207,10 +207,19 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 		return this.oraciones;
 	}
 
-	private static boolean isContained(String source, String subItem) {
+	private static int isContained(String source, String subItem) {
 		String pattern = "\\b" + subItem + "\\b";
 		Pattern p = Pattern.compile(pattern);
 		Matcher m = p.matcher(source);
-		return m.find();
+		int res = 0;
+		while(m.find()) {
+			res ++;
+		}
+		return res;
+	}
+	
+	public static void main(String [] args) {
+		NoDetectorAnnotator nda = new NoDetectorAnnotator();
+		System.out.println(nda.isContained("No HTA, no DM, no DL","no"));
 	}
 }
