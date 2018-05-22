@@ -11,11 +11,7 @@ import org.apache.commons.io.Charsets;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_component.JCasAnnotator_ImplBase;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
-import org.apache.uima.cas.FSIterator;
-import org.apache.uima.cas.Type;
-import org.apache.uima.cas.text.AnnotationIndex;
 import org.apache.uima.jcas.JCas;
-import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceAccessException;
 import org.apache.uima.resource.ResourceInitializationException;
 
@@ -24,7 +20,11 @@ import auxiliar.Oracion;
 import defecto.NoDetector;
 
 
-
+/**
+ * Clase que implementa el comportamiento del anotador de negación.
+ * @author Angel Soler Ruiz
+ * @version 1.0
+ */
 public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 
 	//private Pattern noPattern = Pattern.compile("\\b(No|no).\\p{Punct}\\b");
@@ -51,6 +51,12 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 	// ****************************************
 	static final BreakIterator sentenceBreak = BreakIterator.getSentenceInstance(Locale.US);
 
+	/**
+	 * Método en el que se inicializan:
+	 * - La lista de palabras local a partir de la lectura del archivo Dictionary.txt
+	 * @param aContext Contexto UIMA @see {@link UimaContext}
+	 * @throws ResourceInitializationException si no se puede inicializar el "Dictionary"
+	 */
 	@Override
 	public void initialize(UimaContext aContext) throws ResourceInitializationException {
 		super.initialize(aContext);

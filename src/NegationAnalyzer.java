@@ -12,9 +12,7 @@ import org.apache.uima.UIMAFramework;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.analysis_engine.TextAnalysisEngine;
 import org.apache.uima.cas.FSIterator;
-import org.apache.uima.cas.FeatureStructure;
 import org.apache.uima.cas.Type;
-import org.apache.uima.cas.text.AnnotationIndex;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceInitializationException;
@@ -97,47 +95,65 @@ public class NegationAnalyzer {
 			}
 		}
 		iter.moveToFirst();
-
+		//Hasta aqui es correcto
+		System.out.println("El tamaño de las anotaciones es " + anotaciones.size());
 		Collection<List<NoDetector>>anAux = anotaciones.values();
 		Iterator<List<NoDetector>> it = anAux.iterator();
 		System.out.println("###########################");
 		System.out.println("Filtrando");
-		int idOracion = 0;
-		List<Integer> longitudes = new ArrayList<Integer>();
+
+		//List<Integer> longitudes = new ArrayList<Integer>();
+		//      Comienzo Longitud
+		HashMap<Integer,Integer> longitudesMap = new HashMap<Integer,Integer>(); //El primer elemento es la posicion de comienzo de la anotacion, el segundo es la longitud
+		HashMap<Integer,NoDetector> unicaAnotacion = new HashMap<Integer,NoDetector>();
 		while(it.hasNext()) {
 			List<NoDetector> listaAux = it.next();
+			int idOracion = -1;
+			System.out.println("El tamaño de la lista es " + listaAux.size());
 			for(NoDetector nd: listaAux) {
-				int longitud = nd.getEnd() - nd.getBegin();
-				longitudes.add(longitud);
-			}
-			//En longitudes tengo las longitudes de las anotaciones por orden
-			int max = 0;
-			int indice = 0;
-			for(Integer iA: longitudes) {
-				if(iA >= max) {
-					indice = longitudes.indexOf(iA);
+				int longitud = nd.getEnd() - nd.getBegin() + 1;
+				int comienzo = nd.getBegin();
+				idOracion = nd.getIdOracion();
+				Integer longAux = longitudesMap.get(comienzo);
+				if(longAux!=null) {
+					if(longitud > longAux.intValue()) {
+						longitudesMap.replace(comienzo, longitud);
+						unicaAnotacion.replace(comienzo,nd);
+					}
+				}else {
+					longitudesMap.put(comienzo,longitud);
+					unicaAnotacion.put(comienzo,nd);
 				}
 			}
 
-			//La Anotacion más grande es 
-			NoDetector finalAnotation = listaAux.get(indice);
-			List<NoDetector> lAux = anotacionesFinales.get(finalAnotation.getIdOracion());
-			if(lAux!=null) {
-				lAux.add(finalAnotation);
-				anotacionesFinales.put(finalAnotation.getIdOracion(),lAux);
+			//Si empiezan en la misma posicion
+			//En longitudes tengo las longitudes de las anotaciones por orden
+			//En unicaAnotacion tengo las anotaciones
+			Set<Integer> keySet = unicaAnotacion.keySet();
+			List<NoDetector> anF = anotacionesFinales.get(idOracion);
+			if(anF!=null) {
+				for(Integer iAux: keySet) {
+					NoDetector nDAux = unicaAnotacion.get(iAux);
+					anF.add(nDAux);
+				}
 			}else {
-				List<NoDetector> lAux2 = new ArrayList<NoDetector>();
-				lAux2.add(finalAnotation);
-				anotacionesFinales.put(finalAnotation.getIdOracion(),lAux2);
+				List<NoDetector> nuevaLista = new ArrayList<NoDetector>();
+				for(Integer iAux: keySet) {
+					NoDetector nDAux = unicaAnotacion.get(iAux);
+					nuevaLista.add(nDAux);
+				}
+				anotacionesFinales.put(idOracion,nuevaLista);
 			}
 
+
+			longitudesMap.clear();
+			unicaAnotacion.clear();
 			/*idOracion = annot.getIdOracion();
 				System.out.println("Comienzo de anotaci�n " + annot.getBegin() + " hasta " + annot.getEnd() + " ID de la oraci�n "+ annot.getIdOracion());
 				System.out.println("Oraci�n " + annot.getOracionString() );
 				int longitud = annot.getBegin() - annot.getEnd();
 				idAnotacion++;*/
 		}
-
 		Set<Integer> idsOraciones = anotacionesFinales.keySet();
 		for(Integer id: idsOraciones) {
 			List<NoDetector> anotacionesDeOracion = anotacionesFinales.get(id);
@@ -155,7 +171,7 @@ public class NegationAnalyzer {
 		//Primero obtener la oraci�n y las anotaciones
 		//Segundo ver si est� el concepto en la oraci�n
 		//
-		List<NoDetector> anotacionesSentence = anotaciones.get(sentenceId);
+		List<NoDetector> anotacionesSentence = anotacionesFinales.get(sentenceId);
 		boolean res = false;
 		boolean encontrado = false;
 		if(anotacionesSentence!=null) {//Caso en el que existan anotaciones en la oraci�n con ese id
@@ -196,7 +212,7 @@ public class NegationAnalyzer {
 	//No tengo que hacer el POS
 	public static void main(String [] args) {
 		NegationAnalyzer nA = new NegationAnalyzer();
-		System.out.println(nA.isNegated("VIH",2));
+		System.out.println(nA.isNegated("x",2));
 	}
 
 }
