@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.uima.UIMAFramework;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
@@ -32,6 +33,7 @@ public class NegationAnalyzer {
 	//la b�squeda
 	//La clave es el id de la oraci�n y el valor almacenado es una lista de las anotaciones que hay en esa oraci�n
 	private static HashMap<Integer,List<NoDetector>> anotaciones;
+	private static HashMap<Integer,List<NoDetector>> anotacionesFinales;
 
 	public NegationAnalyzer() {
 		try {
@@ -53,11 +55,15 @@ public class NegationAnalyzer {
 			String document = new String(contents);
 
 			anotaciones = new HashMap<Integer,List<NoDetector>>();
+			anotacionesFinales = new HashMap<Integer,List<NoDetector>>();
 
 			tCas.setDocumentText(document);
 			tae.process(tCas);
 
+			tae.collectionProcessComplete();
+
 			storeAnnotations(tCas);
+
 
 			tae.destroy();
 		} catch (IOException e) {
@@ -76,67 +82,71 @@ public class NegationAnalyzer {
 		System.out.println("En StoreAnnotations");
 		Type tipo = jcas.getTypeSystem().getType("defecto.NoDetector");
 		FSIterator<Annotation> iter = jcas.getAnnotationIndex(tipo).iterator();
-		List<NoDetector> anotacionesEncontradas = new ArrayList<NoDetector>();
+
 		while(iter.hasNext()) {
-			anotacionesEncontradas.add((NoDetector)iter.next());
+			NoDetector anotacion = (NoDetector) iter.next();
+			int idOracion = anotacion.getIdOracion();
+			if(anotaciones.get(idOracion)!=null) {
+				List<NoDetector> listaAux = anotaciones.get(idOracion);
+				listaAux.add(anotacion);
+				anotaciones.put(idOracion,listaAux);
+			}else {
+				List<NoDetector> listaAux = new ArrayList<NoDetector>();
+				listaAux.add(anotacion);
+				anotaciones.put(idOracion,listaAux);
+			}
 		}
 		iter.moveToFirst();
-		while(iter.isValid()) {
-			FeatureStructure fs = iter.get();
-			NoDetector annot = (NoDetector)fs; //Esta es la anotaci�n que quiero a�adir
-			//System.out.println("Anotaci�n (Covered Text) > " + annot.getCoveredText());
-			System.out.println("1)Comienzo de anotaci�n " + annot.getBegin() + " hasta " + annot.getEnd() + " ID de la oraci�n "+ annot.getIdOracion());
-			//System.out.println("Oraci�n " + annot.getOracionString() );
-			//anotaciones.add(index, element);
-			List<NoDetector> aux = anotaciones.get(annot.getIdOracion()); //Estas son las anotaciones de la oraci�n
-			if(aux==null) {
-				//Creo una nueva lista
-				List<NoDetector> nuevaLista = new ArrayList<NoDetector>();
-				nuevaLista.add(annot);
-				anotaciones.put(annot.getIdOracion(),nuevaLista);
-			}else {
-				//No puedo evitar que se cree una anotaci�n que est� contenida en otra de mayor tama�o, pues al estar basado en un
-				//diccionario va a anotarlo. Ej: sin signos de. Va a anotar 3 veces (sin signos de, sin signos y sin). Y es parcialmente
-				//correcto. Me quedo con la de mayor tama�o
-				//Para evitar que me anote varias veces una palabra que ya est� contenida en un conjunto de palabras
-				//de las cuales ya tengo la anotaci�n tengo que filtrar
-				boolean add = false;
-				for(NoDetector nD: aux) { 
-					//nD es la anotaci�n que ya tengo
-					//annot es la que quiero a�adir o no
-					if(nD.getBegin() == annot.getBegin()) { //deben de comenzar en el mismo caracter
-						int lenNd = nD.getEnd() - nD.getBegin();
-						System.out.println("Longitud lenNd = " + lenNd );
-						int lenAnnot = annot.getEnd() - annot.getBegin();
-						System.out.println("Longitud lenAnnot = " + lenAnnot);
-						System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-						//if(nD.getEnd() < annot.getEnd()) { //este caso se corresponder�a con nD = sin y annot = sin signos de
-						if(lenNd > lenAnnot) {	//Debo eliminar las anotaci�n que tengo (nD) 
-							aux.remove(nD);
-							
-							System.out.println("&&&ELIMINADO&&&");
-							add = true; //Indico que tengo que a�adir la nueva annot (sin signos de)
-							//break;
-							aux.add(annot);
-						}
-					}
-				}
-				/*if(add) {
-					aux.add(annot);
-				}*/
-				anotaciones.put(annot.getIdOracion(),aux);
-			}
-			iter.moveToNext();
-		}
+
 		Collection<List<NoDetector>>anAux = anotaciones.values();
 		Iterator<List<NoDetector>> it = anAux.iterator();
 		System.out.println("###########################");
-		System.out.println("Despues de filtrar");
+		System.out.println("Filtrando");
+		int idOracion = 0;
+		List<Integer> longitudes = new ArrayList<Integer>();
 		while(it.hasNext()) {
 			List<NoDetector> listaAux = it.next();
-			for(NoDetector annot : listaAux) {
+			for(NoDetector nd: listaAux) {
+				int longitud = nd.getEnd() - nd.getBegin();
+				longitudes.add(longitud);
+			}
+			//En longitudes tengo las longitudes de las anotaciones por orden
+			int max = 0;
+			int indice = 0;
+			for(Integer iA: longitudes) {
+				if(iA >= max) {
+					indice = longitudes.indexOf(iA);
+				}
+			}
+
+			//La Anotacion más grande es 
+			NoDetector finalAnotation = listaAux.get(indice);
+			List<NoDetector> lAux = anotacionesFinales.get(finalAnotation.getIdOracion());
+			if(lAux!=null) {
+				lAux.add(finalAnotation);
+				anotacionesFinales.put(finalAnotation.getIdOracion(),lAux);
+			}else {
+				List<NoDetector> lAux2 = new ArrayList<NoDetector>();
+				lAux2.add(finalAnotation);
+				anotacionesFinales.put(finalAnotation.getIdOracion(),lAux2);
+			}
+
+			/*idOracion = annot.getIdOracion();
 				System.out.println("Comienzo de anotaci�n " + annot.getBegin() + " hasta " + annot.getEnd() + " ID de la oraci�n "+ annot.getIdOracion());
 				System.out.println("Oraci�n " + annot.getOracionString() );
+				int longitud = annot.getBegin() - annot.getEnd();
+				idAnotacion++;*/
+		}
+
+		Set<Integer> idsOraciones = anotacionesFinales.keySet();
+		for(Integer id: idsOraciones) {
+			List<NoDetector> anotacionesDeOracion = anotacionesFinales.get(id);
+			if(!anotacionesDeOracion.isEmpty()) {
+				for(NoDetector nD: anotacionesDeOracion) {
+					System.out.println("Comienzo de anotacion " + nD.getBegin() + " hasta " + nD.getEnd() + " ID de la oracion " + nD.getIdOracion());
+				}
+			}else {
+				System.out.println("La oracion " + id + " no contiene anotaciones");
 			}
 		}
 	}

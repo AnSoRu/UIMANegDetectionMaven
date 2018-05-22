@@ -79,9 +79,6 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 		docText = jCas.getDocumentText().getBytes();
 		String docTextAux = null;
 		docTextAux = new String(docText,Charsets.UTF_8);
-		System.out.println("################################");
-		System.out.println("El texto es ");
-		System.out.println(jCas.getDocumentText());
 		try {
 			//Se eliminan los saltos de l�nea retornos de carro y tabuladores
 
@@ -134,11 +131,6 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 				System.out.println("El token es ");
 				System.out.println(token);
 				System.out.println("La longitud es " + token.length());
-
-				//System.out.println("El anterior es -> " + anterior);
-				//System.out.println("El anterior con trim es -> " + anterior.trim());
-				//Buscar en el map para ver si es una palabra de negaci�n
-				//Negacion es siempre un string vacio es solo para saber si es != null
 			
 				for(String sAux : listaPalabras) {
 					System.out.println("Evaluando si contiene " + sAux);
@@ -156,18 +148,7 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 						System.out.println("La oracion contiene " + sAux);
 						System.out.println("Comienza en : " + inicio);
 						///
-						posAux = token.indexOf(sAux);
-				
-						Type tipo = jCas.getTypeSystem().getType("defecto.NoDetector");
-						FSIterator<Annotation> iter = jCas.getAnnotationIndex(tipo).iterator();
-						boolean add = true;
-						while(iter.hasNext()) {
-							NoDetector aux2 = (NoDetector) iter.next();
-							if(aux2.getIdOracion()==idOracion) {
-								
-							}
-							
-						}						
+						posAux = token.indexOf(sAux);		
 						
 						NoDetector annotation = new NoDetector(jCas);
 						annotation.setBegin(inicio);
@@ -193,6 +174,14 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 		}
 	}
 	
+	
+	
+	@Override
+	public void collectionProcessComplete() throws AnalysisEngineProcessException {
+		super.collectionProcessComplete();
+		System.out.println("@@@@@@@Terminado");
+	}
+
 	public List<Oracion> getOraciones(){
 		return this.oraciones;
 	}
@@ -207,6 +196,8 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 		}
 		return result;
 	}
+	
+	
 	
 	/*public static void main(String [] args) {
 		NoDetectorAnnotator nda = new NoDetectorAnnotator();
