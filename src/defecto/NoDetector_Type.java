@@ -11,7 +11,7 @@ import org.apache.uima.cas.Feature;
 import org.apache.uima.jcas.tcas.Annotation_Type;
 
 /** 
- * Updated by JCasGen Mon May 21 22:58:40 CEST 2018
+ * Updated by JCasGen Wed May 23 18:00:46 CEST 2018
  * @generated */
 public class NoDetector_Type extends Annotation_Type {
   /** @generated */

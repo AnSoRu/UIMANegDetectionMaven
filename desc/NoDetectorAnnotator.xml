@@ -12,6 +12,7 @@
     <typeSystemDescription>
       <imports>
         <import location="SimpleNoRecognizer.xml"/>
+      <import location="TokenizationTypeSystem.xml"/>
       </imports>
     </typeSystemDescription>
     <typePriorities/>

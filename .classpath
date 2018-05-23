@@ -11,6 +11,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry excluding="testing/" kind="src" path="desc"/>
 	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="var" path="UIMA_HOME/lib/uima-core.jar">
 		<attributes>

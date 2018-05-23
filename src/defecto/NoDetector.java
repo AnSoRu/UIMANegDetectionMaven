@@ -11,8 +11,8 @@ import org.apache.uima.jcas.tcas.Annotation;
 
 
 /** 
- * Updated by JCasGen Mon May 21 22:58:40 CEST 2018
- * XML source: D:/EclipseWorkspace/UIMANegDetection/desc/SimpleNoRecognizer.xml
+ * Updated by JCasGen Wed May 23 18:00:46 CEST 2018
+ * XML source: D:/EclipseWorkspace/UIMANegDetection/desc/NoDetectorAnnotator.xml
  * @generated */
 public class NoDetector extends Annotation {
   /** @generated

@@ -11,13 +11,18 @@ import org.apache.commons.io.Charsets;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_component.JCasAnnotator_ImplBase;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
+import org.apache.uima.cas.FSIterator;
 import org.apache.uima.jcas.JCas;
+import org.apache.uima.jcas.cas.FSArray;
+import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceAccessException;
 import org.apache.uima.resource.ResourceInitializationException;
 
 import auxiliar.OneSentenceText;
 import auxiliar.Oracion;
 import defecto.NoDetector;
+import es.upm.ctb.midas.clikes.tokenization.Sentence;
+import es.upm.ctb.midas.clikes.tokenization.Token;
 
 
 /**
@@ -42,7 +47,6 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 	static String[] SENTENCE;
 	private List<Oracion> oraciones;
 	//private List<Integer> longitudOraciones; //Longitud acumulada
-	private OneSentenceText oST;
 
 	//ParsePosition pp = new ParsePosition(0);
 
@@ -70,118 +74,75 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 			//mapAux = mMap.getMap();
 			listaPalabras = mMap.getLista();
 			oraciones = new ArrayList<Oracion>();
-			//longitudOraciones = new ArrayList<Integer>();
-			oST = new OneSentenceText();
+
 		} catch (ResourceAccessException e) {
 			e.printStackTrace();
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void process(JCas jCas) throws AnalysisEngineProcessException {
 
-		byte[] docText = null;
-		docText = jCas.getDocumentText().getBytes();
-		String docTextAux = null;
-		docTextAux = new String(docText,Charsets.UTF_8);
+		/*byte[] docText = null;
+		docText = jCas.getDocumentText().getBytes();*/
+
+		FSIterator<Annotation> iter = jCas.getAnnotationIndex(Sentence.type).iterator();
+
+		List<Sentence> listaSentences  = new ArrayList<Sentence>();
+
+		while(iter.isValid()) {
+			Sentence sentence = (Sentence) iter.get();
+			listaSentences.add(sentence);
+			iter.moveToNext();
+		}
 		try {
-			//Se eliminan los saltos de l�nea retornos de carro y tabuladores
-
-			/*File temp = File.createTempFile("tempfile",".txt");
-			FileOutputStream fio = new FileOutputStream(temp);
-			fio.write(docText.getBytes());
-			fio.close();*/
-
-			//Este es el texto sobre el que voy a realizar anotaciones
-			//No me importa la parte visual
-
-			String oneSentence = oST.toOneSentenceText(docTextAux); 
-			System.out.println("??????????????????????????????????");
-			System.out.println("La transformada es ");
-			System.out.println(oneSentence);
-			//En la aplicaci�n de visualizaci�n a partir de ahora no van a coincidir la anotaci�n justo encima del texto correspondiente
-			//pues estoy transformando el texto de entrada para que sea m�s r�pida la b�squeda, quitando los retornos de carro y saltos de l�nea.
-			//Puesto que estoy dependiendo al 100% de la posici�n de los caracteres en el texto para poder anotar, transformo todo el texto
-			//en una sola l�nea
-			//En definitiva el texto sobre el que anoto no contiene ni retornos de carro 
-			//No es el objetivo de este proyecto que visualmente se vea la anotaci�n.
-
-			int posAux = 0;
-			//StringTokenizer tokenizer = new StringTokenizer(docText,"\t\r\n.<>/?\";:[{]}\\|=+()!", false);
-			//StringTokenizer tokenizer = new StringTokenizer(docText,"(?<=[.!?])\\s*", false);
-			//StringTokenizer tokenizer = new StringTokenizer(docText,".", false);
-			StringTokenizer tokenizer = new StringTokenizer(oneSentence,".",false);
-			int idOracionAux = 0;
-			while(tokenizer.hasMoreTokens()) {
-				System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIII");
-				String oracionAux = tokenizer.nextToken();
-				System.out.println("SE HA ENCONTRADO LA ORACI�N " + oracionAux);
-				System.out.println("ID DE LA ORACI�N -> " + idOracionAux);
-				int inicioOracion = oneSentence.indexOf(oracionAux);
-				int finOracion = inicioOracion + oracionAux.length();
-				System.out.println("Comienza en " + inicioOracion);
-				System.out.println("Termina en " + finOracion);
-				Oracion oAux = new Oracion(idOracionAux, oracionAux,inicioOracion,finOracion);
-				oraciones.add(oAux);
-				idOracionAux++;
-			}
-			System.out.println("############################");
-			System.out.println("Comenzando bucle while");
 			int i = 0;
-			while(i < oraciones.size()) {
-				//String token = tokenizer.nextToken();
-				Oracion oAux = oraciones.get(i);
-				String token = oAux.getOracion();
-				System.out.println("##############################");
-				System.out.println("El token es ");
-				System.out.println(token);
-				System.out.println("La longitud es " + token.length());
-			
+			while(i < listaSentences.size()) {
+
+				Sentence s = listaSentences.get(i);
+
+				String textoDeSentence = s.getCoveredText(); 		
+				System.out.println("LA SENTENCE ES -> " + textoDeSentence);
+				System.out.println("LA SENTENCE COMIENZA EN -> " + s.getBegin());
+				System.out.println("LA SENTENCE TERMINA EN -> " + s.getEnd());
+				
 				for(String sAux : listaPalabras) {
 					System.out.println("Evaluando si contiene " + sAux);
-					List<Integer> contenida = isContained(token, sAux);
-					
+					List<Integer> contenida = isContained(textoDeSentence, sAux);
+					System.out.println("Lo que hay en contenida es ");
+					for(Integer iC: contenida) {
+						System.out.println(iC);
+					}
 					int tam = contenida.size();
-					int aux = 0;
-					while(aux<tam) {
-						int idOracion = oAux.getId();
-						int inicio = 0;
-						int fin = 0;
-						inicio = contenida.get(aux);
-						fin = inicio + sAux.length() - 1;
-					
-						System.out.println("La oracion contiene " + sAux);
-						System.out.println("Comienza en : " + inicio);
-						///
-						posAux = token.indexOf(sAux);		
-						
-						NoDetector annotation = new NoDetector(jCas);
-						annotation.setBegin(inicio);
-						annotation.setEnd(fin);
-						annotation.setIdOracion(idOracion);
-						annotation.setOracionString(token);
-						annotation.setLongitud(annotation.getEnd()-annotation.getBegin());
+					if(tam>0) {
+						System.out.println("La lista tiene tamaño " + tam);
+						int aux = 0;
+						while(aux<tam) {
+							int inicio = 0;
+							int fin = 0;
+							inicio = contenida.get(aux) + s.getBegin();
+							fin = inicio + sAux.length();
 
-						System.out.println("Se ha creado una anotaci�n en la oraci�n " + idOracion);
-						System.out.println("La anotacion comienza en " + inicio);
-						System.out.println("La anotaci�n termina en " + fin);
+							NoDetector annotation = new NoDetector(jCas);
+							annotation.setBegin(inicio);
+							annotation.setEnd(fin);
+							annotation.addToIndexes();
 
-						annotation.addToIndexes();
-												
-						aux++;
+							System.out.println("Anotado desde " + inicio + " hasta " + fin );
+							
+							aux++;
+						}
 					}
 				}
-				posAux = posAux + token.length();
 				i++;
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
+
+
+
 	@Override
 	public void collectionProcessComplete() throws AnalysisEngineProcessException {
 		super.collectionProcessComplete();
@@ -192,27 +153,20 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 		return this.oraciones;
 	}
 
+	/**
+	 * @param source
+	 * @param subItem
+	 * @return
+	 */
 	private static List<Integer> isContained(String source, String subItem) {
 		String pattern = "\\b" + subItem + "\\b";
 		Pattern p = Pattern.compile(pattern);
 		Matcher m = p.matcher(source);
 		List<Integer> result = new ArrayList<Integer>();
- 		while(m.find()) {
+		while(m.find()) {
 			result.add(m.start());
 		}
 		return result;
 	}
-	
-	
-	
-	/*public static void main(String [] args) {
-		NoDetectorAnnotator nda = new NoDetectorAnnotator();
-		String buscar = "no";
-		for(Integer aux : nda.isContained("No HTA, no DM, no DL",buscar)) {
-			System.out.println(aux);
-			System.out.println("Inicio " + aux);
-			int fin = aux + (buscar.length()-1);
-			System.out.println("Fin " + fin);
-		}
-	}*/
+
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<uriSpecifier xmlns="http://uima.apache.org/resourceSpecifier">
+	<resourceType>AnalysisEngine</resourceType>
+	<uri>es.upm.ctb.midas.clikes.Tokenization0.0.1</uri>
+	<protocol>Vinci</protocol>
+	<parameters>
+		<parameter name="VNS_HOST" value="192.168.1.11"/>
+    	<parameter name="VNS_PORT" value="9000"/>
+  </parameters>
+</uriSpecifier>
