@@ -19,7 +19,7 @@
   <dependencies>
   	<dependency>
   		<groupId>es.upm.ctb.midas.clikes</groupId>
-  		<artifactId>PartOfSpeech</artifactId>
+  		<artifactId>Tokenization</artifactId>
   		<version>0.0.1</version>
   	</dependency>
   </dependencies>
