@@ -12,6 +12,7 @@ import org.apache.uima.analysis_component.JCasAnnotator_ImplBase;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.cas.FSIterator;
 import org.apache.uima.jcas.JCas;
+import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceAccessException;
 import org.apache.uima.resource.ResourceInitializationException;
@@ -19,6 +20,7 @@ import org.apache.uima.resource.ResourceInitializationException;
 import auxiliar.Oracion;
 import defecto.NoDetector;
 import es.upm.ctb.midas.clikes.tokenization.Sentence;
+import es.upm.ctb.midas.clikes.tokenization.Token;
 
 
 /**
@@ -33,6 +35,7 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 	private List<String> listaPalabras;
 	static String[] SENTENCE;
 	private List<Oracion> oraciones;
+	private List<Token> tokensANegar;
 
 	/**
 	 * Método en el que se inicializan:
@@ -50,6 +53,7 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 			mapAux = new HashMap<Integer,NoDetector>();
 			listaPalabras = mMap.getLista();
 			oraciones = new ArrayList<Oracion>();
+			tokensANegar = new ArrayList<Token>();
 
 		} catch (ResourceAccessException e) {
 			e.printStackTrace();
@@ -70,6 +74,9 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 		}
 		try {
 			int i = 0;
+
+			//FSArray tokensSentencia;
+
 			while(i < listaSentences.size()) {
 
 				Sentence s = listaSentences.get(i);
@@ -129,14 +136,62 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 				}//Fin for listaPalabras
 				i++;
 			}//Fin i < listaSentences.size()
-			//Aqui debo recorrer las anotaciones y añadirlas a los indices
+
+			//Anotar el termino al que supuestamente niega
+			i = 0;
 			Set<Integer> claves = mapAux.keySet();
 			Iterator<Integer> itClaves = claves.iterator();
-			while(itClaves.hasNext()) {
-				NoDetector nDAux = mapAux.get(itClaves.next());
-				nDAux.addToIndexes();
-				itClaves.next();
+			while(i < listaSentences.size()) {
+
+				Sentence sAux = listaSentences.get(i);
+				if(sAux!=null) {
+					//Obtengo los tokens de la sentence
+					//Cuidado con los simbolos que no son palabras
+
+					//Obtengo los anotadores de negacion comprendidos entre el begin y el end de la oracion
+					//Coger el primer token cuyo begin sea > que el final del anotador negado 
+					int inicioSentence = sAux.getBegin();
+					int finSentence = sAux.getEnd();
+					List<NoDetector> anotacionesSentence = negacionesSentence(inicioSentence,finSentence);
+					FSArray tokens = sAux.getTokens();
+					//Token supuestoNegado = null;
+					if(!anotacionesSentence.isEmpty()) {
+						for(NoDetector nD : anotacionesSentence) {
+							int j = 0;
+							boolean addedToken = false;
+							while(j < tokens.size() && !addedToken) {
+								Token tAux = (Token) tokens.get(j);
+								if(tAux.getBegin()>nD.getEnd()) {
+									//Cojo el primer token cuyo begin sea mayor que el final de mi anotacion
+									if (!Pattern.matches("\\p{Punct}", tAux.getCoveredText())) {
+										//Caso en el que no sea un signo de puntuacion
+										tokensANegar.add(tAux);
+										addedToken = true;
+									}
+								}
+								j++;
+							}
+						}
+					}
+				}
+
+				i++;
+			}//Fin while 2
+			//Aqui debo recorrer las anotaciones y añadirlas a los indices
+			if(!tokensANegar.isEmpty()) {
+				for(Token t: tokensANegar) {
+					NoDetector palabraNegada = new NoDetector(jCas);
+					palabraNegada.setBegin(t.getBegin());
+					palabraNegada.setEnd(t.getEnd());
+					palabraNegada.addToIndexes();		
+				}
 			}
+
+			//NoDetector nDAux = mapAux.get(itClaves.next());
+			//No voy a añadir la palabra que indica negacion voy a añadir la palabra a la que supuestamente niega
+
+			//nDAux.addToIndexes();
+
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -164,6 +219,19 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 		List<Integer> result = new ArrayList<Integer>();
 		while(m.find()) {
 			result.add(m.start());
+		}
+		return result;
+	}
+
+	//Devuelve los anotadores contenidos en la oracion comprendida entre beginSentence y endSentence
+	private List<NoDetector> negacionesSentence(int beginSentence,int endSentence){
+		List<NoDetector> result = new ArrayList<NoDetector>();
+		while(beginSentence<endSentence) {
+			NoDetector nAux = mapAux.get(beginSentence);
+			if(nAux!=null) {
+				result.add(nAux);
+			}
+			beginSentence++;
 		}
 		return result;
 	}
