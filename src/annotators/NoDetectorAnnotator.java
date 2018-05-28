@@ -1,9 +1,7 @@
 package annotators;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +15,6 @@ import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceAccessException;
 import org.apache.uima.resource.ResourceInitializationException;
 
-import auxiliar.Oracion;
 import defecto.NoDetector;
 import es.upm.ctb.midas.clikes.tokenization.Sentence;
 import es.upm.ctb.midas.clikes.tokenization.Token;
@@ -34,13 +31,15 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 	private HashMap<Integer,NoDetector> mapAux;
 	private List<String> listaPalabras;
 	static String[] SENTENCE;
-	private List<Oracion> oraciones;
+
 	private List<Token> tokensANegar;
 
 	/**
 	 * Método en el que se inicializan:
-	 * - La lista de palabras local a partir de la lectura del archivo Dictionary.txt
-	 * - El hashmap que utiliza para evitar que se anote más de una anotacion que comience en la misma posicion
+	 * - La lista de palabras local a partir de la lectura del archivo dictionary.txt
+	 * - El archivo dictionary.txt se encuentra en el directorio "resources" del proyecto Java
+	 * - El HashMap que utiliza para evitar que se anote más de una anotacion que comience en la misma posicion
+	 * - El ArrayList de objetos de tipo Token que finalmente seran añadidos como anotacion final
 	 * @param aContext Contexto UIMA @see {@link UimaContext}
 	 * @throws ResourceInitializationException si no se puede inicializar el "Dictionary"
 	 */
@@ -52,7 +51,6 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 			mMap = (StringMapResource_impl)getContext().getResourceObject("Dictionary");
 			mapAux = new HashMap<Integer,NoDetector>();
 			listaPalabras = mMap.getLista();
-			oraciones = new ArrayList<Oracion>();
 			tokensANegar = new ArrayList<Token>();
 
 		} catch (ResourceAccessException e) {
@@ -139,8 +137,8 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 
 			//Anotar el termino al que supuestamente niega
 			i = 0;
-			Set<Integer> claves = mapAux.keySet();
-			Iterator<Integer> itClaves = claves.iterator();
+			//Set<Integer> claves = mapAux.keySet();
+			//Iterator<Integer> itClaves = claves.iterator();
 			while(i < listaSentences.size()) {
 
 				Sentence sAux = listaSentences.get(i);
@@ -201,10 +199,6 @@ public class NoDetectorAnnotator extends JCasAnnotator_ImplBase {
 	public void collectionProcessComplete() throws AnalysisEngineProcessException {
 		super.collectionProcessComplete();
 		System.out.println("@@@@@@@Terminado");
-	}
-
-	public List<Oracion> getOraciones(){
-		return this.oraciones;
 	}
 
 	/**
