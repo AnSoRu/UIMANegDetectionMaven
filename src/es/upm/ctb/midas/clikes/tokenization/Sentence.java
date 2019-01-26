@@ -19,12 +19,11 @@ public class Sentence extends Annotation {
   /** @generated
    * @ordered 
    */
-  @SuppressWarnings ("hiding")
-  public final static int typeIndexID = JCasRegistry.register(Sentence.class);
+  
+	public final static int typeIndexID = JCasRegistry.register(Sentence.class);
   /** @generated
    * @ordered 
    */
-  @SuppressWarnings ("hiding")
   public final static int type = typeIndexID;
   /** @generated
    * @return index of the type  

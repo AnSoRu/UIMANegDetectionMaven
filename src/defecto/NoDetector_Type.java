@@ -15,11 +15,9 @@ import org.apache.uima.jcas.tcas.Annotation_Type;
  * @generated */
 public class NoDetector_Type extends Annotation_Type {
   /** @generated */
-  @SuppressWarnings ("hiding")
   public final static int typeIndexID = NoDetector.typeIndexID;
   /** @generated 
      @modifiable */
-  @SuppressWarnings ("hiding")
   public final static boolean featOkTst = JCasRegistry.getFeatOkTst("defecto.NoDetector");
 
 

@@ -15,11 +15,10 @@ import org.apache.uima.jcas.tcas.Annotation_Type;
  * @generated */
 public class Sentence_Type extends Annotation_Type {
   /** @generated */
-  @SuppressWarnings ("hiding")
-  public final static int typeIndexID = Sentence.typeIndexID;
+  
+	public final static int typeIndexID = Sentence.typeIndexID;
   /** @generated 
      @modifiable */
-  @SuppressWarnings ("hiding")
   public final static boolean featOkTst = JCasRegistry.getFeatOkTst("es.upm.ctb.midas.clikes.tokenization.Sentence");
  
   /** @generated */
